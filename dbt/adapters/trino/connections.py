@@ -14,11 +14,10 @@ from dbt.adapters.contracts.connection import AdapterResponse, Credentials
 from dbt.adapters.events.logging import AdapterLogger
 from dbt.adapters.exceptions.connection import FailedToConnectError
 from dbt.adapters.sql import SQLConnectionManager
+from dbt.adapters.trino.__version__ import version
 from dbt_common.exceptions import DbtDatabaseError, DbtRuntimeError
 from dbt_common.helper_types import Port
 from trino.transaction import IsolationLevel
-
-from dbt.adapters.trino.__version__ import version
 
 logger = AdapterLogger("Trino")
 PREPARED_STATEMENTS_ENABLED_DEFAULT = True
@@ -206,7 +205,7 @@ class TrinoKerberosCredentials(TrinoCredentials):
 
     def trino_auth(self):
         os.environ["KRB5_CLIENT_KTNAME"] = self.keytab
-        return trino.auth.KerberosAuthentication(
+        return trino.auth.GSSAPIAuthentication(
             config=self.krb5_config,
             service_name=self.service_name,
             principal=self.principal,
